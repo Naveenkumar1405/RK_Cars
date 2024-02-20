@@ -133,13 +133,13 @@
                                         </div>
 
                                         <div id="success_message" class='success'>
-                                            Your message has been sent successfully. Refresh this page if you want to send more messages.
+                                            Your message has been sent successfully!
                                         </div>
                                         <div id="error_message" class='error'>
                                             Sorry there was an error sending your form.
                                         </div>
                                 </form>
-						</div>
+						    </div>
                                 <div class="col-lg-4">
                                     <div class="de-box mb30">
                                         <h4>Location</h4>
@@ -225,5 +225,44 @@
     <script src="../static/js/plugins.js"></script>
     <script src="../static/js/designesia.js"></script>
     <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("contact_form").addEventListener("submit", function(e) {
+        e.preventDefault(); // Prevent the default form submission
+        var formData = new FormData(this);
+        fetch('/send', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if(response.ok) {
+                return response.json(); // Assuming the server responds with JSON
+            } else {
+                throw new Error('Server responded with a non-200 status code');
+            }
+        })
+        .then(data => {
+            if(data.success) {
+                document.getElementById('success_message').style.display = 'block';
+                reloadPageEveryTenSeconds();
+                document.getElementById('error_message').style.display = 'none';
+            } else {
+                document.getElementById('error_message').style.display = 'block';
+                document.getElementById('success_message').style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('error_message').style.display = 'block';
+            document.getElementById('success_message').style.display = 'none';
+        });
+    });
+});
+        function reloadPageEveryTenSeconds() {
+                                            setTimeout(function() {
+                                                window.location.reload();
+                                            }, 5000);
+                                        }
+</script>
 </body>
 </html>
